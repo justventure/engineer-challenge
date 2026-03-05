@@ -9,8 +9,20 @@ export interface RegisterInput {
   username?: string
 }
 
+export interface RecoveryInput {
+  flow: string
+  token: string
+  password: string
+}
+
 export interface AuthState {
   isAuthenticated: boolean
   loading: boolean
   error: string | null
+}
+
+export interface UpdateSettingsInput {
+  method: string
+  password?: string
+  traits?: Record<string, unknown>
 }

@@ -11,10 +11,12 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
+  overflow: hidden;
 }
 
 .logo {
   padding: 2vh 0 0 1.39vw;
+  flex-shrink: 0;
 }
 
 .logoImg {
@@ -23,8 +25,9 @@
 }
 
 .formSide {
-  padding: 18.125vh 5.555vw 25vh;
+  padding: 18.125vh 5.555vw 0;
   flex: 1;
+  overflow-y: auto;
 }
 
 .authDesc {
@@ -34,6 +37,7 @@
 .bottom {
   padding: 0 5.55vw;
   padding-bottom: 2rem;
+  flex-shrink: 0;
 }
 
 .imageSide {

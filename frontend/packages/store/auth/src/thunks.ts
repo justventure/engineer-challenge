@@ -1,7 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { getClient } from './client'
-import { LOGIN_MUTATION, REGISTER_MUTATION } from './queries'
-import type { LoginInput, RegisterInput } from './types'
+import { LOGIN_MUTATION, REGISTER_MUTATION, RECOVERY_MUTATION } from './queries'
+import type { LoginInput, RegisterInput, RecoveryInput } from './types'
+import type { UpdateSettingsInput } from './types'
+import { UPDATE_SETTINGS_MUTATION } from './queries'
 
 export const loginThunk = createAsyncThunk(
   'auth/login',
@@ -32,6 +34,41 @@ export const registerThunk = createAsyncThunk(
     } catch (error: unknown) {
       const message =
         error instanceof Error ? error.message : 'Registration failed'
+      return rejectWithValue(message)
+    }
+  }
+)
+
+export const recoveryThunk = createAsyncThunk(
+  'auth/recovery',
+  async (input: RecoveryInput, { rejectWithValue }) => {
+    try {
+      const client = getClient()
+      const data = await client.request<{ recovery: boolean }>(
+        RECOVERY_MUTATION,
+        { input }
+      )
+      return data.recovery
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : 'Recovery failed'
+      return rejectWithValue(message)
+    }
+  }
+)
+
+export const updateSettingsThunk = createAsyncThunk(
+  'auth/updateSettings',
+  async (input: UpdateSettingsInput, { rejectWithValue }) => {
+    try {
+      const client = getClient()
+      const data = await client.request<{ updateSettings: string }>(
+        UPDATE_SETTINGS_MUTATION,
+        { input }
+      )
+      return data.updateSettings
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Update settings failed'
       return rejectWithValue(message)
     }
   }

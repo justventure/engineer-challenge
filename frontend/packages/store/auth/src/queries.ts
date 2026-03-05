@@ -11,3 +11,15 @@ export const REGISTER_MUTATION = gql`
     register(input: $input)
   }
 `
+
+export const RECOVERY_MUTATION = gql`
+  mutation Recovery($input: RecoveryInput!) {
+    recovery(input: $input)
+  }
+`
+
+export const UPDATE_SETTINGS_MUTATION = gql`
+  mutation UpdateSettings($input: UpdateSettingsInput!) {
+    updateSettings(input: $input)
+  }
+`
