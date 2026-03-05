@@ -1,0 +1,71 @@
+networks:
+  kratos-network:
+    external: true
+    name: kratos-network
+
+volumes:
+  hydra-db-data:
+    name: hydra-db-data
+
+services:
+  postgres-hydra:
+    image: postgres:17-alpine
+    container_name: hydra-postgres
+    environment:
+      POSTGRES_DB: hydra
+      POSTGRES_USER: hydra
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - hydra-db-data:/var/lib/postgresql/data
+    networks:
+      - kratos-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hydra"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  hydra-migrate:
+    image: oryd/hydra:v2.3.0
+    container_name: hydra-migrate
+    command: migrate sql --yes postgres://hydra:secret@postgres-hydra:5432/hydra?sslmode=disable
+    networks:
+      - kratos-network
+    depends_on:
+      postgres-hydra:
+        condition: service_healthy
+    restart: on-failure
+
+  hydra:
+    image: oryd/hydra:v2.3.0
+    container_name: hydra
+    command: serve all --dev -c /etc/config/hydra/hydra.yaml
+    volumes:
+      - ../config/hydra/hydra.yaml:/etc/config/hydra/hydra.yaml:ro
+    ports:
+      - "4444:4444"
+      - "4445:4445"
+    networks:
+      - kratos-network
+    depends_on:
+      hydra-migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4444/health/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  hydra-client-init:
+    image: oryd/hydra:v2.3.0
+    container_name: hydra-client-init
+    volumes:
+      - ../config/hydra/register_client.sh:/register_client.sh:ro
+    entrypoint: ["/bin/sh", "/register_client.sh"]
+    networks:
+      - kratos-network
+    depends_on:
+      hydra:
+        condition: service_healthy
+    restart: on-failure

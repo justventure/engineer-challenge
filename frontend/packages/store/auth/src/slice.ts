@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { AuthState } from './types'
-import { loginThunk, registerThunk } from './thunks'
+import { loginThunk, registerThunk, recoveryThunk, updateSettingsThunk } from './thunks'
 
 const initialState: AuthState = {
   isAuthenticated: false,
@@ -47,6 +47,32 @@ const authSlice = createSlice({
         state.loading = false
         state.error = action.payload as string
       })
+
+      .addCase(recoveryThunk.pending, (state) => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(recoveryThunk.fulfilled, (state) => {
+        state.loading = false
+      })
+      .addCase(recoveryThunk.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.payload as string
+      })
+
+      .addCase(updateSettingsThunk.pending, (state) => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(updateSettingsThunk.fulfilled, (state) => {
+        state.loading = false
+        state.isAuthenticated = true
+      })
+      .addCase(updateSettingsThunk.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.payload as string
+      })
+      
   },
 })
 
