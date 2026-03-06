@@ -26,7 +26,7 @@ export const LoginPage = () => {
           <AuthFooter
             text="Ещё не зарегестрированны?"
             linkText="Зарегистрироваться"
-            linkHref="/register"
+            linkHref="/registration"
           />
         </div>
       </div>

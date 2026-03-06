@@ -4255,7 +4255,6 @@ __metadata:
   resolution: "@store/root@workspace:packages/store/root"
   dependencies:
     "@reduxjs/toolkit": "npm:^2.0.0"
-    "@store/auth": "npm:*"
     "@types/node": "npm:^24.9.1"
     "@types/react": "npm:19.2.4"
     "@types/styled-components": "npm:^5.1.34"

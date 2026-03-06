@@ -4,7 +4,11 @@ let clientInstance: GraphQLClient | null = null
 
 export const getClient = (): GraphQLClient => {
   if (!clientInstance) {
-    clientInstance = new GraphQLClient(process.env.NEXT_PUBLIC_GRAPHQL_URL!, {
+    const url = typeof window === 'undefined'
+      ? process.env.INTERNAL_GRAPHQL_URL!
+      : process.env.NEXT_PUBLIC_GRAPHQL_URL!
+
+    clientInstance = new GraphQLClient(url, {
       credentials: 'include',
     })
   }
