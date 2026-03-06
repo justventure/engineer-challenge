@@ -27,7 +27,8 @@ make up
 ### [backend](./backend)
 
 GraphQL поддерживает `Set-Cookies`.
-Паттерны **DDD** и **DI**.
+Паттерны **DDD** и **DI**.  
+Ory экосистема 
 
 ### [frontend](./frontend)
 
