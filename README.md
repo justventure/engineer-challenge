@@ -17,10 +17,11 @@ make up
 
 1. Есть дублирование стилей/tsx. (скорость прототипирования)
 2. Использование redux. (скорость прототипирования + архитектура)
-3. Неявный frontend FSD. (скорость прототипирования)
-4. Webpack (HMR, hot-reload)
-5. Нет подтверждения пароля по почте при регистрация.(время отладки)
-6. Без использования hydra(время отладки)
+3. Webpack (HMR, hot-reload)
+4. Нет подтверждения пароля по почте при регистрация.(время отладки)
+5. Без использования hydra(время отладки)
+6. Ratelimitingless (Поскольку frontend имеет 1 ip нужно делать каждый раз проброс ip-пользователя через
+graphql к backend ИЛИ делать без на proxy/ingress/loadbalancer лимит для маршрутов/запросов)
 
 ## ADR
 
@@ -42,8 +43,3 @@ Ory экосистема
 3. Нет ошибки которая показывает что пользователь уже авторизирован.
 4. Нету rate-limiting.
 5. Hardcode
-
-### Pinterest
-
-- [moodboard](https://ru.pinterest.com/veniaminshp/moodboard/)
-- [antimoodboard](https://ru.pinterest.com/veniaminshp/antimoodboard/)

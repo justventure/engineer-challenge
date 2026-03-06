@@ -1,7 +1,7 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../check-mail-form/dist",
+    "outDir": "dist",
     "declaration": true,
     "declarationMap": true,
     "emitDeclarationOnly": false,
@@ -10,6 +10,6 @@
     "allowSyntheticDefaultImports": true
   },
   "include": [
-    "../check-mail-form/src"
+    "src"
   ]
 }
