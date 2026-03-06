@@ -48,6 +48,35 @@ impl KratosSessionAdapter {
             geo_location,
         })
     }
+
+    pub async fn is_recovery_session(&self, cookie: Option<&str>) -> bool {
+        let Some(cookie) = cookie else { return false };
+        let url =
+            format!("{}/sessions/whoami", self.client.public_url).replace("localhost", "127.0.0.1");
+        let Ok(response) = self
+            .client
+            .client
+            .get(&url)
+            .header(header::COOKIE, cookie)
+            .send()
+            .await
+        else {
+            return false;
+        };
+        let Ok(data) = response.json::<serde_json::Value>().await else {
+            return false;
+        };
+        data["authentication_methods"]
+            .as_array()
+            .map(|methods| {
+                methods.iter().any(|m| {
+                    m["method"].as_str() == Some("link_recovery")
+                        || m["method"].as_str() == Some("code_recovery")
+                })
+            })
+            .unwrap_or(false)
+    }
+
     async fn get_logout_flow(&self, cookie: &str) -> Result<String, SessionError> {
         let url = format!("{}/self-service/logout/browser", self.client.public_url);
         let url = url.replace("localhost", "127.0.0.1");
@@ -87,17 +116,18 @@ impl SessionPort for KratosSessionAdapter {
             .send()
             .await
             .map_err(|e| SessionError::NetworkError(e.to_string()))?;
-        if !response.status().is_success() {
-            let error_text = response
-                .text()
-                .await
-                .unwrap_or_else(|_| "Unknown error".to_string());
-            return Err(SessionError::UnknownError(format!(
-                "Logout failed: {}",
-                error_text
-            )));
+        let status = response.status();
+        if status.is_success() || status == 302 || status == 303 {
+            return Ok(());
         }
-        Ok(())
+        let error_text = response
+            .text()
+            .await
+            .unwrap_or_else(|_| "Unknown error".to_string());
+        Err(SessionError::UnknownError(format!(
+            "Logout failed: {}",
+            error_text
+        )))
     }
     async fn check_active_session(&self, cookie: Option<&str>) -> bool {
         if let Some(cookie_value) = cookie {
