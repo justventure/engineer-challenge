@@ -1,5 +1,5 @@
 'use client'
-import { RegisterForm } from '@widgets/login'
+import { RegisterForm } from '@widgets/registration'
 import { AuthFooter } from '@ui/auth-footer'
 import { AuthDescText } from '@ui/auth-desc-text'
 import styles from './styles/index.module.scss'

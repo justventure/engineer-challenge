@@ -40,6 +40,9 @@
       "@widgets/login": [
         "packages/widgets/login"
       ],
+      "@widgets/registration": [
+        "packages/widgets/registration"
+      ],
       "@widgets/recovery": [
         "packages/widgets/recovery"
       ],
