@@ -13,6 +13,9 @@ jobs:
       image-name: ${{ github.repository }}/frontend-entrypoint
       context: "./frontend"
       dockerfile: "./frontend/Dockerfile"
+      build-args: |
+        NEXT_PUBLIC_GRAPHQL_URL=http://localhost:8080/graphql
+        NEXT_INTERNAL_GRAPHQL_URL=http://rust_kratos:8080/graphql
     secrets:
       personal_access_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
