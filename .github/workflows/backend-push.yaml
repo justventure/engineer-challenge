@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - master
+    paths:
+      - "backend/**"
 
 jobs:
   trigger-build:
@@ -23,3 +25,15 @@ jobs:
       - name: Deploy to environment
         run: |
           echo "Deploying application"
+
+  trigger-cleanup:
+    needs: [trigger-build]
+    uses: vwency/workflow/.github/workflows/clean-registry.yaml@main
+    with:
+      owner: ${{ github.repository_owner }}
+      repository: frontend
+      package: engineer-challenge/backend
+      keep_n_tagged: 2
+      dry_run: false
+    secrets:
+      personal_access_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
