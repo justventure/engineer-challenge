@@ -33,11 +33,10 @@ Ory экосистема
 ### [frontend](./frontend)
 
 Монорепозиторий на **webpack** (поддержка HMR), **Nx**, **Next.js**.
-**Redux**, позволяет поддерживать порядок в коде.
+**Redux**
 
 ### Проблемные места
 
 1. После login, registeration нет редиректов на homepage.
-2. Нет ошибки которая показывает что пользователь уже авторизирован.
-3. Нету rate-limiting.
-4. Hardcode
+2. Нету rate-limiting.
+3. Hardcode
