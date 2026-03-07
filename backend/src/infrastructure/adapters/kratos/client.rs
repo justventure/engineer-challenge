@@ -5,15 +5,15 @@ use std::time::Duration;
 #[derive(Clone)]
 pub struct KratosClient {
     #[allow(unused)]
-    pub(crate) client: Client,
+    pub client: Client,
     #[allow(unused)]
-    pub(crate) admin_url: String,
+    pub admin_url: String,
     #[allow(unused)]
-    pub(crate) public_url: String,
+    pub public_url: String,
     #[allow(unused)]
-    pub(crate) max_retries: u32,
+    pub max_retries: u32,
     #[allow(unused)]
-    pub(crate) retry_delay: Duration,
+    pub retry_delay: Duration,
 }
 
 impl KratosClient {
