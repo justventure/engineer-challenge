@@ -46,8 +46,9 @@ async fn start_server(
     server::start(
         schema,
         config.server.clone(),
-        container.hydra_client.clone(),
-        container.kratos_client.clone(),
+        #[cfg(feature = "hydra")]
+        container.hydra.clone(),
+        container.kratos.clone(),
     )
     .await
     .map_err(|e| anyhow::anyhow!("Server error: {}", e))

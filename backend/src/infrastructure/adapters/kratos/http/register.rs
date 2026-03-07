@@ -1,4 +1,5 @@
-use crate::domain::ports::registration::{RegistrationData, RegistrationError, RegistrationPort};
+use crate::domain::errors::DomainError;
+use crate::domain::ports::registration::{RegistrationData, RegistrationPort};
 use crate::infrastructure::adapters::kratos::client::KratosClient;
 use crate::infrastructure::adapters::kratos::http::flows::{fetch_flow, post_flow};
 use async_trait::async_trait;
@@ -16,10 +17,7 @@ impl KratosRegistrationAdapter {
 
 #[async_trait]
 impl RegistrationPort for KratosRegistrationAdapter {
-    async fn initiate_registration(
-        &self,
-        cookie: Option<&str>,
-    ) -> Result<String, RegistrationError> {
+    async fn initiate_registration(&self, cookie: Option<&str>) -> Result<String, DomainError> {
         let flow = fetch_flow(
             &self.client.client,
             &self.client.public_url,
@@ -27,19 +25,19 @@ impl RegistrationPort for KratosRegistrationAdapter {
             cookie,
         )
         .await
-        .map_err(|e| RegistrationError::NetworkError(e.to_string()))?;
+        .map_err(|e| DomainError::Network(e.to_string()))?;
 
         flow.flow["id"]
             .as_str()
             .map(|s| s.to_string())
-            .ok_or_else(|| RegistrationError::FlowNotFound)
+            .ok_or(DomainError::FlowNotFound)
     }
 
     async fn complete_registration(
         &self,
         flow_id: &str,
         data: RegistrationData,
-    ) -> Result<String, RegistrationError> {
+    ) -> Result<String, DomainError> {
         let flow = fetch_flow(
             &self.client.client,
             &self.client.public_url,
@@ -47,14 +45,14 @@ impl RegistrationPort for KratosRegistrationAdapter {
             None,
         )
         .await
-        .map_err(|e| RegistrationError::NetworkError(e.to_string()))?;
+        .map_err(|e| DomainError::Network(e.to_string()))?;
 
         let payload = serde_json::json!({
             "method": "password",
             "password": data.password,
             "traits": {
                 "email": data.email,
-                "username": data.username
+                "username": data.username,
             },
             "csrf_token": flow.csrf_token,
         });
@@ -68,11 +66,10 @@ impl RegistrationPort for KratosRegistrationAdapter {
             &flow.cookies,
         )
         .await
-        .map_err(|e| RegistrationError::NetworkError(e.to_string()))?;
+        .map_err(|e| DomainError::Network(e.to_string()))?;
 
-        let response_data = &result.data;
-        if response_data.get("session").is_none() && response_data.get("identity").is_none() {
-            return Err(RegistrationError::UnknownError(
+        if result.data.get("session").is_none() && result.data.get("identity").is_none() {
+            return Err(DomainError::Unknown(
                 "Neither session nor identity found in response".to_string(),
             ));
         }
@@ -81,8 +78,6 @@ impl RegistrationPort for KratosRegistrationAdapter {
             .cookies
             .into_iter()
             .find(|c| c.contains("ory_kratos_session"))
-            .ok_or_else(|| {
-                RegistrationError::UnknownError("No session cookie was created".to_string())
-            })
+            .ok_or_else(|| DomainError::Unknown("No session cookie was created".to_string()))
     }
 }

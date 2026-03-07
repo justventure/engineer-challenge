@@ -5,4 +5,5 @@ mod integration {
     mod kratos_recovery_test;
     mod kratos_registration_test;
     mod kratos_session_test;
+    mod usecases_test;
 }

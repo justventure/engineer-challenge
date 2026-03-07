@@ -1,4 +1,4 @@
-use crate::domain::entities::user::UserProfile;
+use crate::domain::entities::user_profile::UserProfile;
 use crate::infrastructure::di::container::UseCases;
 use async_graphql::{Context, Object, Result};
 use std::sync::Arc;

@@ -32,3 +32,8 @@ path = "tests/lib.rs"
 
 [dev-dependencies]
 uuid = { version = "1.22.0", features = ["v4"] }
+
+
+[features]
+default = []
+hydra = []
