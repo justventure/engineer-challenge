@@ -6,15 +6,10 @@ pub mod session;
 pub mod settings;
 pub mod verification;
 
-#[allow(unused)]
-pub use auth::{AuthError, AuthenticationPort, LoginCredentials};
-pub use identity::{IdentityError, IdentityPort};
-#[allow(unused)]
-pub use recovery::{RecoveryError, RecoveryPort, RecoveryRequest};
-#[allow(unused)]
-pub use registration::{RegistrationData, RegistrationError, RegistrationPort};
-pub use session::{SessionError, SessionPort};
-#[allow(unused)]
-pub use verification::{
-    SendCodeRequest, SubmitCodeRequest, VerificationError, VerificationPort, VerifyByLinkRequest,
-};
+pub use auth::{AuthenticationPort, LoginCredentials};
+pub use identity::IdentityPort;
+pub use recovery::{RecoveryPort, RecoveryRequest};
+pub use registration::{RegistrationData, RegistrationPort};
+pub use session::SessionPort;
+pub use settings::{SettingsData, SettingsPort};
+pub use verification::{SendCodeRequest, SubmitCodeRequest, VerificationPort, VerifyByLinkRequest};

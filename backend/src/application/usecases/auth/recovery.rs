@@ -1,5 +1,5 @@
-use crate::domain::graphql::inputs::RecoveryInput;
-use crate::domain::ports::{RecoveryError, RecoveryPort};
+use crate::domain::errors::DomainError;
+use crate::domain::ports::{RecoveryPort, RecoveryRequest};
 use std::sync::Arc;
 use tracing::{error, info};
 
@@ -7,23 +7,23 @@ pub struct RecoveryUseCase {
     recovery_port: Arc<dyn RecoveryPort>,
 }
 
-#[allow(unused)]
 impl RecoveryUseCase {
     pub fn new(recovery_port: Arc<dyn RecoveryPort>) -> Self {
         Self { recovery_port }
     }
+
     pub async fn execute(
         &self,
-        input: RecoveryInput,
+        request: RecoveryRequest,
         cookie: Option<&str>,
-    ) -> Result<(), RecoveryError> {
+    ) -> Result<(), DomainError> {
         info!(
-            email = &input.email,
+            email = &request.email,
             cookie_present = cookie.is_some(),
             "Starting recovery process"
         );
         self.recovery_port
-            .initiate_recovery(input.into(), cookie)
+            .initiate_recovery(request, cookie)
             .await
             .map_err(|e| {
                 error!(error = %e, "Recovery failed");

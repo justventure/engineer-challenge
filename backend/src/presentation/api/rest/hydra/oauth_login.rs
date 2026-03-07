@@ -12,7 +12,7 @@ struct KratosLoginRequest {
 
 #[post("/login/kratos")]
 #[instrument(skip(hydra, req))]
-pub async fn login_kratos(
+pub async fn hydra_login_via_kratos(
     body: web::Json<KratosLoginRequest>,
     hydra: web::Data<Arc<HydraClient>>,
     req: HttpRequest,

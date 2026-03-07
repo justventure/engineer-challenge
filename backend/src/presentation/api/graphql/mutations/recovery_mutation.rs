@@ -1,5 +1,6 @@
-use crate::domain::graphql::inputs::RecoveryInput;
+use crate::domain::ports::recovery::RecoveryRequest;
 use crate::infrastructure::di::container::UseCases;
+use crate::presentation::api::graphql::inputs::inputs::RecoveryInput;
 use async_graphql::{Context, Object, Result};
 use std::sync::Arc;
 use tracing::info;
@@ -11,12 +12,9 @@ pub struct RecoveryMutation;
 impl RecoveryMutation {
     async fn recovery(&self, ctx: &Context<'_>, input: RecoveryInput) -> Result<bool> {
         info!("Recovery mutation called");
-
         let use_cases = ctx
             .data::<Arc<UseCases>>()
             .map_err(|e| async_graphql::Error::new(format!("DI error: {:?}", e)))?;
-
-        info!("UseCases resolved from context");
 
         let cookie = ctx
             .data_opt::<Option<String>>()
@@ -25,7 +23,7 @@ impl RecoveryMutation {
 
         use_cases
             .recovery
-            .execute(input, cookie)
+            .execute(RecoveryRequest::from(input), cookie)
             .await
             .map_err(|e| async_graphql::Error::new(e.to_string()))?;
 

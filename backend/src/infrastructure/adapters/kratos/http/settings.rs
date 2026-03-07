@@ -1,4 +1,5 @@
-use crate::domain::ports::settings::{SettingsData, SettingsError, SettingsPort};
+use crate::domain::errors::DomainError;
+use crate::domain::ports::settings::{SettingsData, SettingsPort};
 use crate::infrastructure::adapters::kratos::client::KratosClient;
 use crate::infrastructure::adapters::kratos::http::flows::{fetch_flow, post_flow};
 use async_trait::async_trait;
@@ -17,7 +18,7 @@ impl KratosSettingsAdapter {
 
 #[async_trait]
 impl SettingsPort for KratosSettingsAdapter {
-    async fn initiate_settings(&self, cookie: &str) -> Result<String, SettingsError> {
+    async fn initiate_settings(&self, cookie: &str) -> Result<String, DomainError> {
         let flow = fetch_flow(
             &self.client.client,
             &self.client.public_url,
@@ -25,12 +26,12 @@ impl SettingsPort for KratosSettingsAdapter {
             Some(cookie),
         )
         .await
-        .map_err(|e| SettingsError::NetworkError(e.to_string()))?;
+        .map_err(|e| DomainError::Network(e.to_string()))?;
 
         flow.flow["id"]
             .as_str()
             .map(|s| s.to_string())
-            .ok_or_else(|| SettingsError::FlowNotFound)
+            .ok_or(DomainError::FlowNotFound)
     }
 
     async fn update_settings(
@@ -38,7 +39,7 @@ impl SettingsPort for KratosSettingsAdapter {
         flow_id: &str,
         data: SettingsData,
         cookie: &str,
-    ) -> Result<(String, Vec<String>), SettingsError> {
+    ) -> Result<(String, Vec<String>), DomainError> {
         let flow = fetch_flow(
             &self.client.client,
             &self.client.public_url,
@@ -46,7 +47,7 @@ impl SettingsPort for KratosSettingsAdapter {
             Some(cookie),
         )
         .await
-        .map_err(|e| SettingsError::NetworkError(e.to_string()))?;
+        .map_err(|e| DomainError::Network(e.to_string()))?;
 
         let csrf_token = flow.csrf_token.clone();
         debug!("Using flow_id: {}, csrf_token: {}", flow_id, csrf_token);
@@ -92,7 +93,7 @@ impl SettingsPort for KratosSettingsAdapter {
             &flow.cookies,
         )
         .await
-        .map_err(|e| SettingsError::NetworkError(e.to_string()))?;
+        .map_err(|e| DomainError::Network(e.to_string()))?;
 
         debug!("Settings response: {:?}", result.data);
         debug!("Settings response cookies: {:?}", result.cookies);
@@ -102,7 +103,7 @@ impl SettingsPort for KratosSettingsAdapter {
             .get("state")
             .and_then(|s| s.as_str())
             .map(|s| s.to_string())
-            .ok_or_else(|| SettingsError::UnknownError("No state in response".to_string()))?;
+            .ok_or_else(|| DomainError::Unknown("No state in response".to_string()))?;
 
         Ok((state, result.cookies))
     }

@@ -34,6 +34,7 @@ impl Environment {
 #[derive(Debug, Clone, Deserialize)]
 pub struct Config {
     pub kratos: KratosConfig,
+    #[cfg(feature = "hydra")]
     pub hydra: HydraConfig,
     pub server: ServerConfig,
 }
@@ -85,18 +86,17 @@ pub struct ServerConfig {
     pub log_level: String,
     #[serde(default = "default_cors_max_age")]
     pub cors_max_age: usize,
+    #[serde(default = "default_cors_allowed_origins")]
+    pub cors_allowed_origins: Vec<String>,
 }
 
 impl Config {
     pub fn from_env() -> Result<Self, config::ConfigError> {
         dotenvy::dotenv().ok();
-
         let environment = Environment::from_env();
         let config_filename = environment.config_filename();
         let config_path = format!("config/app/{}", config_filename);
-
         info!(path = %format!("{}.toml", config_path), "Loading config file");
-
         let builder = config::Config::builder()
             .add_source(
                 config::File::with_name(&config_path)
@@ -108,7 +108,6 @@ impl Config {
                     .separator("__")
                     .try_parsing(true),
             );
-
         builder.build()?.try_deserialize()
     }
 }
@@ -145,4 +144,7 @@ fn default_log_level() -> String {
 }
 fn default_cors_max_age() -> usize {
     3600
+}
+fn default_cors_allowed_origins() -> Vec<String> {
+    vec!["http://localhost:3000".to_string()]
 }

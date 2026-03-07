@@ -1,16 +1,15 @@
-use crate::domain::ports::recovery::{RecoveryError, RecoveryPort, RecoveryRequest};
+use crate::domain::errors::DomainError;
+use crate::domain::ports::recovery::{RecoveryPort, RecoveryRequest};
 use crate::infrastructure::adapters::kratos::client::KratosClient;
 use crate::infrastructure::adapters::kratos::http::flows::{fetch_flow, post_flow};
 use async_trait::async_trait;
 use std::sync::Arc;
 use tracing::debug;
 
-#[allow(unused)]
 pub struct KratosRecoveryAdapter {
     client: Arc<KratosClient>,
 }
 
-#[allow(unused)]
 impl KratosRecoveryAdapter {
     pub fn new(client: Arc<KratosClient>) -> Self {
         Self { client }
@@ -23,7 +22,7 @@ impl RecoveryPort for KratosRecoveryAdapter {
         &self,
         request: RecoveryRequest,
         cookie: Option<&str>,
-    ) -> Result<(), RecoveryError> {
+    ) -> Result<(), DomainError> {
         let flow = fetch_flow(
             &self.client.client,
             &self.client.public_url,
@@ -31,15 +30,16 @@ impl RecoveryPort for KratosRecoveryAdapter {
             cookie,
         )
         .await
-        .map_err(|e| RecoveryError::NetworkError(e.to_string()))?;
-        let flow_id = flow.flow["id"]
-            .as_str()
-            .ok_or(RecoveryError::FlowNotFound)?;
+        .map_err(|e| DomainError::Network(e.to_string()))?;
+
+        let flow_id = flow.flow["id"].as_str().ok_or(DomainError::FlowNotFound)?;
+
         let payload = serde_json::json!({
             "method": "link",
             "email": request.email,
             "csrf_token": flow.csrf_token,
         });
+
         let result = post_flow(
             &self.client.client,
             &self.client.public_url,
@@ -49,7 +49,8 @@ impl RecoveryPort for KratosRecoveryAdapter {
             &flow.cookies,
         )
         .await
-        .map_err(|e| RecoveryError::NetworkError(e.to_string()))?;
+        .map_err(|e| DomainError::Network(e.to_string()))?;
+
         if result.cookies.is_empty() {
             debug!("No cookies returned from Kratos");
         } else {
@@ -59,6 +60,7 @@ impl RecoveryPort for KratosRecoveryAdapter {
                 "Cookies returned from Kratos"
             );
         }
+
         Ok(())
     }
 }

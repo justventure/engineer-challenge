@@ -1,5 +1,5 @@
 use crate::application::usecases::auth::verification::VerificationUseCase;
-use crate::domain::graphql::inputs::{
+use crate::presentation::api::graphql::inputs::inputs::{
     SendVerificationCodeInput, SubmitVerificationCodeInput, VerifyByLinkInput,
 };
 use async_graphql::{Context, Object, Result};
@@ -11,13 +11,15 @@ pub struct VerificationMutation;
 impl VerificationMutation {
     async fn verify_by_link(&self, ctx: &Context<'_>, input: VerifyByLinkInput) -> Result<bool> {
         let verification_use_case = ctx.data_unchecked::<VerificationUseCase>();
-
         let cookie = ctx
             .data_opt::<Option<String>>()
             .and_then(|opt| opt.as_ref())
             .map(|s| s.as_str());
 
-        verification_use_case.execute_link(input, cookie).await?;
+        verification_use_case
+            .execute_link(input.into(), cookie)
+            .await
+            .map_err(|e| async_graphql::Error::new(e.to_string()))?;
 
         Ok(true)
     }
@@ -28,15 +30,15 @@ impl VerificationMutation {
         input: SendVerificationCodeInput,
     ) -> Result<bool> {
         let verification_use_case = ctx.data_unchecked::<VerificationUseCase>();
-
         let cookie = ctx
             .data_opt::<Option<String>>()
             .and_then(|opt| opt.as_ref())
             .map(|s| s.as_str());
 
         verification_use_case
-            .execute_code_send(input, cookie)
-            .await?;
+            .execute_code_send(input.into(), cookie)
+            .await
+            .map_err(|e| async_graphql::Error::new(e.to_string()))?;
 
         Ok(true)
     }
@@ -47,7 +49,6 @@ impl VerificationMutation {
         input: SubmitVerificationCodeInput,
     ) -> Result<bool> {
         let verification_use_case = ctx.data_unchecked::<VerificationUseCase>();
-
         let cookie = ctx
             .data_opt::<Option<String>>()
             .and_then(|opt| opt.as_ref())
@@ -56,8 +57,9 @@ impl VerificationMutation {
             })?;
 
         verification_use_case
-            .execute_code_submit(input, cookie)
-            .await?;
+            .execute_code_submit(input.into(), cookie)
+            .await
+            .map_err(|e| async_graphql::Error::new(e.to_string()))?;
 
         Ok(true)
     }
