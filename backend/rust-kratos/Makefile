@@ -1,10 +1,10 @@
-.PHONY: run dev up down infra-up infra-down mailhog-up mailhog-down
+.PHONY: run dev up down infra-up infra-down mailhog-up mailhog-down cleanup
 
 COMPOSE = docker compose
 RUST_BIN = cargo
 RUST_ARGS = run
 
-INFRA_PATH = ../../infra
+INFRA_PATH = ../../infrastructure
 
 run:
 	$(RUST_BIN) $(RUST_ARGS)
@@ -28,3 +28,6 @@ up:
 
 down:
 	$(COMPOSE) -f docker-compose.app.yaml down -v
+
+cleanup:
+	$(MAKE) -C $(INFRA_PATH) cleanup
