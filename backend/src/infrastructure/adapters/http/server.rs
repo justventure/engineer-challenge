@@ -44,8 +44,13 @@ pub async fn start(
             .supports_credentials()
             .max_age(cors_max_age);
 
-        for origin in &cors_allowed_origins {
-            cors = cors.allowed_origin(origin);
+        if cors_allowed_origins.contains(&"*".to_string()) {
+            cors = cors.allow_any_origin();
+        } else {
+            cors = cors.supports_credentials();
+            for origin in &cors_allowed_origins {
+                cors = cors.allowed_origin(origin);
+            }
         }
 
         let app = App::new()
