@@ -1,20 +1,21 @@
 name: Build Docker Images (backend)
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
       - master
     paths:
-      - "backend/**"
+      - "backend/rust-kratos/**"
 
 jobs:
   trigger-build:
     uses: vwency/workflow/.github/workflows/buildx.yaml@main
     with:
       image-name: ${{ github.repository }}/backend
-      context: "./backend"
-      dockerfile: "./backend/Dockerfile"
+      context: "./backend/rust-kratos"
+      dockerfile: "./backend/rust-kratos/Dockerfile"
     secrets:
       personal_access_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
