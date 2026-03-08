@@ -1,7 +1,6 @@
 # Auth Service
 
 ## Запуск
-
 ```bash
 make up
 ```
@@ -19,15 +18,14 @@ make up
 2. Использование redux. (скорость прототипирования + архитектура)
 3. Webpack (HMR, hot-reload)
 4. Нет подтверждения пароля по почте при регистрация.(время отладки)
-5. Ratelimitingless (Поскольку frontend имеет 1 ip нужно делать каждый раз проброс ip-пользователя через
-graphql к backend ИЛИ делать на proxy/ingress/loadbalancer лимит для маршрутов/запросов, если запросы к frontend будут идти через proxy, такое сделать не получиться)
+5. Ratelimitingless (Поскольку frontend имеет 1 ip нужно делать каждый раз проброс ip-пользователя через graphql к backend ИЛИ делать на proxy/ingress/loadbalancer лимит для маршрутов/запросов, если запросы к frontend будут идти через proxy, такое сделать не получиться)
 
 ## ADR
 
 ### [backend](./backend)
 
 GraphQL поддерживает `Set-Cookies`.
-Паттерны **DDD** и **DI**.  
+Паттерны **DDD** и **DI**.
 Ory экосистема
 
 ### [frontend](./frontend)
