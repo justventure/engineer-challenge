@@ -8,9 +8,6 @@ use crate::infrastructure::adapters::kratos::client::KratosClient;
 use crate::infrastructure::di::{adapter_factory::AdapterFactory, factory::KratosAdapterFactory};
 use std::sync::Arc;
 
-#[cfg(feature = "hydra")]
-use crate::infrastructure::adapters::hydra::client::HydraClient;
-
 pub struct UseCases {
     pub register: RegisterUseCase,
     pub login: LoginUseCase,
@@ -39,8 +36,6 @@ impl UseCases {
 pub struct AppContainer {
     pub use_cases: Arc<UseCases>,
     pub kratos: Arc<KratosClient>,
-    #[cfg(feature = "hydra")]
-    pub hydra: Arc<HydraClient>,
 }
 
 impl AppContainer {
@@ -51,12 +46,7 @@ impl AppContainer {
         let factory = KratosAdapterFactory::from_client(kratos.clone());
         let use_cases = Arc::new(UseCases::new(&factory));
 
-        Ok(Self {
-            use_cases,
-            kratos,
-            #[cfg(feature = "hydra")]
-            hydra: Arc::new(HydraClient::new(&config.hydra)),
-        })
+        Ok(Self { use_cases, kratos })
     }
 
     fn validate_config(config: &Config) -> Result<(), ContainerError> {
