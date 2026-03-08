@@ -43,15 +43,9 @@ async fn start_server(
     config: &Config,
     container: &AppContainer,
 ) -> anyhow::Result<()> {
-    server::start(
-        schema,
-        config.server.clone(),
-        #[cfg(feature = "hydra")]
-        container.hydra.clone(),
-        container.kratos.clone(),
-    )
-    .await
-    .map_err(|e| anyhow::anyhow!("Server error: {}", e))
+    server::start(schema, config.server.clone(), container.kratos.clone())
+        .await
+        .map_err(|e| anyhow::anyhow!("Server error: {}", e))
 }
 
 async fn shutdown_signal() {

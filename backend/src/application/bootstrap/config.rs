@@ -34,8 +34,6 @@ impl Environment {
 #[derive(Debug, Clone, Deserialize)]
 pub struct Config {
     pub kratos: KratosConfig,
-    #[cfg(feature = "hydra")]
-    pub hydra: HydraConfig,
     pub server: ServerConfig,
 }
 
@@ -57,25 +55,6 @@ pub struct KratosConfig {
     pub retry_delay_ms: u64,
     #[serde(default = "default_accept_invalid_certs")]
     pub accept_invalid_certs: bool,
-}
-
-#[derive(Debug, Clone, Deserialize)]
-pub struct HydraConfig {
-    pub admin_url: String,
-    pub public_url: String,
-    pub client_id: String,
-    pub client_secret: String,
-    pub redirect_uri: String,
-    #[serde(default = "default_timeout")]
-    pub timeout_secs: u64,
-    #[serde(default = "default_connect_timeout")]
-    pub connect_timeout_secs: u64,
-    #[serde(default = "default_accept_invalid_certs")]
-    pub accept_invalid_certs: bool,
-    #[serde(default = "default_remember_for")]
-    pub remember_for_secs: u64,
-    #[serde(default = "default_token_lifespan")]
-    pub token_lifespan_secs: u64,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -132,12 +111,6 @@ fn default_retry_delay() -> u64 {
 }
 fn default_accept_invalid_certs() -> bool {
     false
-}
-fn default_remember_for() -> u64 {
-    3600
-}
-fn default_token_lifespan() -> u64 {
-    3600
 }
 fn default_log_level() -> String {
     "info".to_string()

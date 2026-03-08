@@ -1,12 +1,8 @@
 use crate::application::bootstrap::config::ServerConfig;
 use crate::infrastructure::adapters::graphql::handlers::{graphql_handler, graphql_playground};
-#[cfg(feature = "hydra")]
-use crate::infrastructure::adapters::hydra::client::HydraClient;
 use crate::infrastructure::adapters::kratos::client::KratosClient;
 use crate::presentation::api::graphql::schema::AppSchema;
 use crate::presentation::api::rest::health_check;
-#[cfg(feature = "hydra")]
-use crate::presentation::api::rest::hydra;
 use actix_cors::Cors;
 use actix_web::{App, HttpServer, http, web};
 use actix_web_prometheus::PrometheusMetricsBuilder;
@@ -18,7 +14,6 @@ use tracing_actix_web::TracingLogger;
 pub async fn start(
     schema: Arc<AppSchema>,
     config: ServerConfig,
-    #[cfg(feature = "hydra")] hydra_client: Arc<HydraClient>,
     kratos_client: Arc<KratosClient>,
 ) -> anyhow::Result<()> {
     let bind_address = format!("{}:{}", config.host, config.port);
@@ -65,11 +60,6 @@ pub async fn start(
                     .route(web::get().to(graphql_playground)),
             )
             .configure(health_check::configure);
-
-        #[cfg(feature = "hydra")]
-        let app = app
-            .app_data(web::Data::new(hydra_client.clone()))
-            .configure(hydra::configure);
 
         app
     })
