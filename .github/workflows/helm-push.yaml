@@ -7,8 +7,8 @@ on:
       - main
       - master
     paths:
-      - "infrastructure/helm/backend-chart/**"
-      - "infrastructure/helm/frontend-chart/**"
+      - "infrastructure/helm/rust-kratos-chart/**"
+      - "infrastructure/helm/frontend-entrypoint-chart/**"
 
 jobs:
   trigger-helm-push-backend:
@@ -26,6 +26,7 @@ jobs:
       personal_access_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
   trigger-cleanup-backend:
+    needs: [trigger-helm-push-backend]
     uses: vwency/workflow/.github/workflows/clean-registry.yaml@main
     with:
       owner: ${{ github.repository_owner }}
@@ -37,6 +38,7 @@ jobs:
       personal_access_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
   trigger-cleanup-frontend:
+    needs: [trigger-helm-push-frontend]
     uses: vwency/workflow/.github/workflows/clean-registry.yaml@main
     with:
       owner: ${{ github.repository_owner }}
