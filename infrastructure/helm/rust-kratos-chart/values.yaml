@@ -1,7 +1,7 @@
 namespace: default
 
 image:
-  repository: ghcr.io/vwency/engineer-challenge/backend
+  repository: ghcr.io/vwency/engineer-challenge/rust-kratos
   tag: master
   pullPolicy: Always
 
