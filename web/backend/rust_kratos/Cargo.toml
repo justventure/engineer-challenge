@@ -4,8 +4,9 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+chrono = { version = "0.4.44", features = ["serde"] }
 actix-web = "4"
-async-graphql = "8.0.0-rc.1"
+async-graphql = { version = "8.0.0-rc.1", features = ["chrono"] }
 async-graphql-actix-web = "8.0.0-rc.1"
 tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 tracing = { version = "0.1.44" }
@@ -22,7 +23,6 @@ config = "0.15.19"
 actix-web-prometheus = "0.1.2"
 dotenvy = "0.15"
 redis = { version = "1.0.5", features = ["tokio-comp", "connection-manager"] }
-
 [[test]]
 name = "integration"
 path = "tests/lib.rs"
