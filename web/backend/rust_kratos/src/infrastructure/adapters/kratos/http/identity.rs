@@ -68,7 +68,7 @@ impl IdentityPort for KratosIdentityAdapter {
             .map_err(|e| DomainError::ServiceUnavailable(e.to_string()))?;
 
         let profile: crate::domain::entities::user_profile::UserProfile =
-            session.identity.traits.into();
+            (session.identity, session.active, session.expires_at).into();
 
         if let Some(cache) = &self.cache {
             if let Ok(serialized) = serde_json::to_string(&profile) {

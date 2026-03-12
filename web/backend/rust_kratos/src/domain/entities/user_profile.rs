@@ -1,18 +1,15 @@
-use async_graphql::SimpleObject;
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
-#[allow(unused)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct User {
+pub struct UserProfile {
     pub id: String,
     pub email: String,
     pub username: String,
     pub geo_location: Option<String>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, SimpleObject)]
-pub struct UserProfile {
-    pub email: String,
-    pub username: String,
-    pub geo_location: Option<String>,
+    pub created_at: Option<DateTime<Utc>>,
+    pub updated_at: Option<DateTime<Utc>>,
+    pub state: Option<String>,
+    pub active: bool,
+    pub expires_at: Option<DateTime<Utc>>,
 }

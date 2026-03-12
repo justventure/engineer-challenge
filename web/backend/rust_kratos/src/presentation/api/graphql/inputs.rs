@@ -1,3 +1,4 @@
+use crate::domain::entities::user_profile::UserProfile;
 use crate::domain::errors::DomainError;
 use crate::domain::ports::inbound::login::LoginCredentials;
 use crate::domain::ports::inbound::recovery::RecoveryRequest;
@@ -8,7 +9,8 @@ use crate::domain::ports::inbound::verification::{
 };
 use crate::domain::value_objects::email::Email;
 use crate::domain::value_objects::password::Password;
-use async_graphql::InputObject;
+use async_graphql::{InputObject, SimpleObject};
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
@@ -62,6 +64,35 @@ pub struct UpdateSettingsInput {
     pub lookup_secret_regenerate: Option<bool>,
     pub lookup_secret_reveal: Option<bool>,
     pub transient_payload: Option<Value>,
+}
+
+#[derive(SimpleObject)]
+pub struct UserProfileOutput {
+    pub id: String,
+    pub email: String,
+    pub username: String,
+    pub geo_location: Option<String>,
+    pub created_at: Option<DateTime<Utc>>,
+    pub updated_at: Option<DateTime<Utc>>,
+    pub state: Option<String>,
+    pub active: bool,
+    pub expires_at: Option<DateTime<Utc>>,
+}
+
+impl From<UserProfile> for UserProfileOutput {
+    fn from(p: UserProfile) -> Self {
+        Self {
+            id: p.id,
+            email: p.email,
+            username: p.username,
+            geo_location: p.geo_location,
+            created_at: p.created_at,
+            updated_at: p.updated_at,
+            state: p.state,
+            active: p.active,
+            expires_at: p.expires_at,
+        }
+    }
 }
 
 impl TryFrom<LoginInput> for LoginCredentials {
