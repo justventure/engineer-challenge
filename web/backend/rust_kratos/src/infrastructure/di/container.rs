@@ -10,8 +10,7 @@ use crate::application::commands::{
 use crate::application::queries::get_current_user::GetCurrentUserQueryHandler;
 use crate::infrastructure::di::adapter_factory::AdapterFactory;
 use crate::infrastructure::{
-    adapters::cache::redis_cache::RedisCache, adapters::kratos::client::KratosClient,
-    di::factory::KratosAdapterFactory,
+    adapters::cache::redis_cache::RedisCache, di::factory::AdapterFactoryImpl,
 };
 use std::sync::Arc;
 use std::time::Duration;
@@ -64,18 +63,11 @@ pub struct AppContainer {
     pub use_cases: Arc<UseCases>,
     pub cache: RedisCache,
     pub rate_limits: RateLimitsConfig,
-    kratos: Arc<KratosClient>,
 }
 
 impl AppContainer {
     pub async fn new(config: &Config) -> Result<Self, ContainerError> {
         Self::validate_config(config)?;
-
-        let kratos = Arc::new(KratosClient::new(&config.kratos));
-        kratos
-            .wait_until_ready()
-            .await
-            .map_err(|e| ContainerError::Initialization(format!("Kratos unavailable: {e}")))?;
 
         let cache = RedisCache::new_with_retry(
             &config.redis.url,
@@ -85,17 +77,12 @@ impl AppContainer {
         .await
         .map_err(|e| ContainerError::Initialization(format!("Redis unavailable: {e}")))?;
 
-        let factory = KratosAdapterFactory::from_client(
-            kratos.clone(),
-            cache.clone(),
-            config.redis.cache_ttl_secs,
-        );
+        let factory = AdapterFactoryImpl::new(cache.clone(), config.redis.cache_ttl_secs);
 
         Ok(Self {
             use_cases: Arc::new(UseCases::new(&factory)),
             cache,
             rate_limits: config.rate_limits.clone(),
-            kratos,
         })
     }
 
@@ -103,16 +90,7 @@ impl AppContainer {
         self.use_cases.clone()
     }
 
-    pub fn kratos_client(&self) -> Arc<KratosClient> {
-        self.kratos.clone()
-    }
-
     fn validate_config(config: &Config) -> Result<(), ContainerError> {
-        if config.kratos.public_url.is_empty() {
-            return Err(ContainerError::InvalidConfig(
-                "Kratos public URL cannot be empty".into(),
-            ));
-        }
         if config.redis.url.is_empty() {
             return Err(ContainerError::InvalidConfig(
                 "Redis URL cannot be empty".into(),
