@@ -6,70 +6,51 @@ use crate::domain::ports::{
     outbound::{identity::IdentityPort, session::SessionPort},
 };
 use crate::infrastructure::adapters::cache::redis_cache::RedisCache;
-use crate::infrastructure::adapters::kratos::{
-    client::KratosClient,
-    http::{
-        identity::KratosIdentityAdapter, login::KratosAuthenticationAdapter,
-        logout::KratosSessionAdapter, recovery::KratosRecoveryAdapter,
-        register::KratosRegistrationAdapter, settings::KratosSettingsAdapter,
-        verification::KratosVerificationAdapter,
-    },
+use crate::infrastructure::adapters::db::pool::DbPool;
+use crate::infrastructure::adapters::db::repositories::{
+    auth::AuthRepository, identity::IdentityRepository, recovery::RecoveryRepository,
+    registration::RegistrationRepository, session::SessionRepository, settings::SettingsRepository,
+    verification::VerificationRepository,
 };
 use crate::infrastructure::di::adapter_factory::AdapterFactory;
 use std::sync::Arc;
 
-pub struct KratosAdapterFactory {
-    client: Arc<KratosClient>,
+pub struct AdapterFactoryImpl {
+    pool: DbPool,
     cache: RedisCache,
     cache_ttl_secs: u64,
 }
 
-impl KratosAdapterFactory {
-    pub fn from_client(client: Arc<KratosClient>, cache: RedisCache, cache_ttl_secs: u64) -> Self {
+impl AdapterFactoryImpl {
+    pub fn new(pool: DbPool, cache: RedisCache, cache_ttl_secs: u64) -> Self {
         Self {
-            client,
+            pool,
             cache,
             cache_ttl_secs,
         }
     }
 }
 
-impl AdapterFactory for KratosAdapterFactory {
+impl AdapterFactory for AdapterFactoryImpl {
     fn create_registration_adapter(&self) -> Arc<dyn RegistrationPort> {
-        Arc::new(KratosRegistrationAdapter::new(self.client.clone()))
+        Arc::new(RegistrationRepository::new(self.pool.clone()))
     }
-
     fn create_authentication_adapter(&self) -> Arc<dyn AuthenticationPort> {
-        Arc::new(KratosAuthenticationAdapter::new(
-            self.client.clone(),
-            self.create_session_adapter(),
-        ))
+        Arc::new(AuthRepository::new(self.pool.clone()))
     }
-
     fn create_session_adapter(&self) -> Arc<dyn SessionPort> {
-        Arc::new(KratosSessionAdapter::new(
-            self.client.clone(),
-            Some(self.cache.clone()),
-        ))
+        Arc::new(SessionRepository::new(self.pool.clone()))
     }
-
     fn create_recovery_adapter(&self) -> Arc<dyn RecoveryPort> {
-        Arc::new(KratosRecoveryAdapter::new(self.client.clone()))
+        Arc::new(RecoveryRepository::new(self.pool.clone()))
     }
-
     fn create_verification_adapter(&self) -> Arc<dyn VerificationPort> {
-        Arc::new(KratosVerificationAdapter::new(self.client.clone()))
+        Arc::new(VerificationRepository::new(self.pool.clone()))
     }
-
     fn create_identity_adapter(&self) -> Arc<dyn IdentityPort> {
-        Arc::new(KratosIdentityAdapter::new(
-            self.client.clone(),
-            Some(self.cache.clone()),
-            self.cache_ttl_secs,
-        ))
+        Arc::new(IdentityRepository::new(self.pool.clone()))
     }
-
     fn create_settings_adapter(&self) -> Arc<dyn SettingsPort> {
-        Arc::new(KratosSettingsAdapter::new(self.client.clone()))
+        Arc::new(SettingsRepository::new(self.pool.clone()))
     }
 }
