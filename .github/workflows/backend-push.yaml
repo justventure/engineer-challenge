@@ -13,7 +13,7 @@ jobs:
   trigger-build:
     uses: vwency/workflow/.github/workflows/buildx.yaml@main
     with:
-      image-name: ${{ github.repository }}/rust-kratos
+      image-name: ${{ github.repository }}/rust_kratos
       context: "./web/backend/rust_kratos"
       dockerfile: "./web/backend/rust_kratos/Dockerfile"
     secrets:
@@ -33,7 +33,7 @@ jobs:
     with:
       owner: ${{ github.repository_owner }}
       repository: engineer-challenge
-      package: engineer-challenge/rust-kratos
+      package: engineer-challenge/rust_kratos
       keep_n_tagged: 2
       dry_run: false
     secrets:
