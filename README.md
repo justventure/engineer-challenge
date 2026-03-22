@@ -1,5 +1,16 @@
 # Auth Service
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=vwency_engineer-challenge&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=vwency_engineer-challenge) [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=vwency_engineer-challenge&metric=bugs)](https://sonarcloud.io/summary/new_code?id=vwency_engineer-challenge) [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=vwency_engineer-challenge&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=vwency_engineer-challenge) ![License](https://img.shields.io/github/license/vwency/engineer-challenge)
+<div align="left">
+  <a href="https://sonarcloud.io/summary/new_code?id=vwency_engineer-challenge"><img src="https://sonarcloud.io/api/project_badges/measure?project=vwency_engineer-challenge&metric=alert_status"/></a>
+  <a href="https://sonarcloud.io/summary/new_code?id=vwency_engineer-challenge"><img src="https://sonarcloud.io/api/project_badges/measure?project=vwency_engineer-challenge&metric=bugs"/></a>
+  <a href="https://sonarcloud.io/summary/new_code?id=vwency_engineer-challenge"><img src="https://sonarcloud.io/api/project_badges/measure?project=vwency_engineer-challenge&metric=code_smells"/></a>
+  <img src="https://img.shields.io/github/license/vwency/engineer-challenge"/>
+  <img src="https://img.shields.io/github/last-commit/vwency/engineer-challenge"/>
+  <img src="https://img.shields.io/github/repo-size/vwency/engineer-challenge"/>
+  <img src="https://img.shields.io/github/issues/vwency/engineer-challenge"/>
+  <img src="https://img.shields.io/badge/rust-1.95.0--nightly-orange?logo=rust"/>
+  <img src="https://img.shields.io/badge/unsafe-forbidden-success"/>
+  <a href="https://github.com/vwency/engineer-challenge/actions/workflows/backend-push.yaml"><img src="https://github.com/vwency/engineer-challenge/actions/workflows/backend-push.yaml/badge.svg"/></a>
+</div>
 
 ## Description 
 Проект реализует функции восстановление пароля, регистрация, авторизации, максимально приближенные к prod-ready решениям. С кэшированием в valkey(open source форк redis)
@@ -23,27 +34,27 @@
 
 **ADR References:**  
 - [Cookie-based Session Authentication](./docs/adr/0001-cookie-session.md)  
-- [GraphQL Gateway Architecture](./docs/adr/0002-graphql-gateway.md)  
 - [Valkey Cache for Session Profiles](./docs/adr/0003-valkey-cache.md)  
-- [Rate Limiting GraphQL](./docs/adr/0004-rate-limiting-graphql.md)
 
 ## Tech stack
-1. **GraphQL**, поскольку поддерживает в запросе `Set-Cookies`, и дает Backward Compatibility.    
+1. **REST**, поскольку поддерживает в запросе `Set-Cookies`, статус коды http.
 2. **Yarn berry** большое сообщество, кастомизация.  
 3. **NX** время сборки, уменьшение времени на CI.  
 4. **Rust** строгая типипизация, гарантия доставки, гибкость в архитектуре.
 5. **Valkey**  Поддержка — Valkey поддерживается крупными компаниями: AWS, Google, Oracle, Ericsson. Redis Ltd. — единственный вендор Redis OSS.
 
 
-## Trade-offs
-1. Дублирование стилей/tsx. (скорость прототипирования), рефакторинг перед подготовкой к prod-ready.
-2. Redux. (скорость прототипирования + архитектура, возможен пересмотр при разработке.  
-3. Webpack (HMR, hot-reload)  как альтернатива рассматривался turbopack(нету HMR)  
-4. Нет подтверждения пароля по почте при регистрации. (время отладки), рефакторинг во время разработки, сразу.  
-5. Нет полноценного IaC(время), при enterprise подготовки к prod.  
-6. Не использовал jwt поскольку сервис 1, нет экосистемы сервисов; сессия шарится cross-domain если cookie-based и делаем запрос с другого домена с `credentials: include`. При подготовки в prod, или масштабировании.
-7. Сервис уже является bounded context
-Auth-сервис сам по себе — это один BC в рамках большей системы. Дробить BC внутри сервиса — это over-engineering, если нет реальных причин.
+## Trade-offs  
+| Решение | Причина | Когда пересмотреть |
+|---|---|---|
+| Дублирование стилей/tsx | Скорость прототипирования | Перед подготовкой к prod-ready |
+| Redux | Скорость прототипирования + архитектура | Возможен пересмотр при разработке |
+| Webpack (HMR, hot-reload) | HMR из коробки, turbopack его не поддерживает | При появлении HMR в turbopack |
+| Нет подтверждения пароля по почте при регистрации | Время отладки | Рефакторинг во время разработки |
+| Нет полноценного IaC | Время | При enterprise подготовке к prod |
+| Cookie-based сессии вместо JWT | Один сервис, нет экосистемы; сессия шарится cross-domain с `credentials: include` | При масштабировании или добавлении новых сервисов |
+| Auth-сервис как единый Bounded Context | Дробить BC внутри одного сервиса — over-engineering без реальных причин | При выделении отдельных поддоменов в рамках роста системы |
+| Ory экосистема | гибкость конфигурации и интеграция с hydra для OpenID | При enterprise+ |
 
 ### Continue
 1. GitOps — чтение новых helm релизов и их применение.
@@ -51,16 +62,17 @@ Auth-сервис сам по себе — это один BC в рамках б
 3. Нагрузочные тесты на GetCurrentUserQuery, Commands
 
 Схема command запроса:
+Схема command запроса:
 ```mermaid
 flowchart LR
-    GQL[GraphQL Gateway]
-    GQL -->|UserIp X-Forwarded-For| RateLimit{RateLimiter}
-    RateLimit -->|Exceeded| GQLError[GraphQL Error]
+    Client[HTTP Client]
+    Client -->|UserIp X-Forwarded-For| RateLimit{RateLimiter}
+    RateLimit -->|Exceeded| RestError[REST Error 429]
     RateLimit -->|OK| TryFrom
 
     subgraph Validation
         TryFrom -->|Email + Password VO| LoginCommand
-        TryFrom -->|Err| GQLError
+        TryFrom -->|Err| RestError
     end
 
     subgraph Application
@@ -85,48 +97,48 @@ flowchart LR
     end
 
     KratosAuthenticationAdapter -->|SessionCookie| LoginCommandHandler
-    LoginCommandHandler -->|session_token| GQL
-    GQL -->|Set-Cookie| GQLResponse[GraphQL Response]
+    LoginCommandHandler -->|session_token| Client
+    Client -->|Set-Cookie| RestResponse[POST /auth/login Response]
 ```
 
 Реализация кэша redis для запрос Query, что бы не загружать postgres.
 ```mermaid
 flowchart TD
-    GQL[GraphQL Gateway]
-    GQL -->|UserIp from X-Forwarded-For| RateLimit{RateLimiter}
-    RateLimit -->|Exceeded| GQLError[GraphQL Error]
+    Client[HTTP Client]
+    Client -->|UserIp from X-Forwarded-For| RateLimit{RateLimiter}
+    RateLimit -->|Exceeded| RestError[REST Error 429]
     RateLimit -->|OK| GetCurrentUserQuery
-    GQL -->|cookie from request| GetCurrentUserQuery
+    Client -->|cookie from request| GetCurrentUserQuery
 
     GetCurrentUserQuery -->|cookie Option| GetCurrentUserQueryHandler
     GetCurrentUserQueryHandler -->|extract session token| CacheKey[cache_key: user_profile:token]
 
     CacheKey --> RedisLookup{Redis GET}
     RedisLookup -->|HIT| Deserialize[serde_json::from_str]
-    Deserialize -->|UserProfile| GQLResponse[GraphQL Response]
+    Deserialize -->|UserProfile| RestResponse[GET /auth/me Response]
 
     RedisLookup -->|MISS| IdentityPort
     IdentityPort -->|get_current_user cookie| KratosIdentityAdapter
     KratosIdentityAdapter -->|GET /sessions/whoami| Kratos
     Kratos -->|401 Unauthorized| AuthError[AuthError::NotAuthenticated]
-    AuthError --> GQLError
+    AuthError --> RestError
 
     Kratos -->|SessionResponse| KratosIdentityAdapter
     KratosIdentityAdapter -->|traits.into| UserProfile
     UserProfile -->|serde_json::to_string| RedisSet[Redis SET EX cache_ttl_secs]
-    RedisSet --> GQLResponse
+    RedisSet --> RestResponse
 ```
 
 Валидация входных данных:
 ```mermaid
 flowchart LR
-    Input[GraphQL Input]
+    Input[REST Input Body]
     Input --> TryFrom[TryFrom]
 
     TryFrom --> VO[VO Email / Password]
 
     VO -->|Ok| Domain[Domain Object]
-    VO -->|Err| Error[GraphQL Error]
+    VO -->|Err| Error[REST Error 422]
 
     Domain --> Handler[CommandHandler]
     Handler --> Adapter[KratosAdapter]
@@ -138,9 +150,8 @@ flowchart LR
 
     Response --> Adapter
     Adapter --> Handler
-    Handler --> GQLResponse[GraphQL Response]
+    Handler --> RestResponse[REST Response]
 ```
-
 
 ## Running  
 ```bash
