@@ -15,7 +15,7 @@ use serde_json::Value;
 
 #[derive(Deserialize)]
 pub struct RegisterDto {
-    pub email: String,
+    pub identifier: String,
     pub username: Option<String>,
     pub password: String,
     pub geo_location: Option<String>,
@@ -123,7 +123,7 @@ impl TryFrom<RegisterDto> for RegistrationData {
 
     fn try_from(dto: RegisterDto) -> Result<Self, Self::Error> {
         Ok(Self {
-            email: Email::new(dto.email)?,
+            email: Email::new(dto.identifier)?,
             username: dto.username.unwrap_or_default(),
             password: Password::new(dto.password)?,
             geo_location: dto.geo_location,

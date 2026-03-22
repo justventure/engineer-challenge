@@ -1,4 +1,5 @@
 use crate::application::bootstrap::config::ServerConfig;
+use crate::infrastructure::adapters::http::swagger;
 use crate::infrastructure::di::container::AppContainer;
 use crate::presentation::api::rest::health_check;
 use crate::presentation::api::rest::middleware::cookies::CookieMiddleware;
@@ -54,6 +55,7 @@ pub async fn start(config: ServerConfig, container: Arc<AppContainer>) -> anyhow
             .app_data(web::Data::new(use_cases.clone()))
             .configure(health_check::configure)
             .service(web::scope("/api/v1").configure(handlers::configure))
+            .configure(swagger::configure)
     })
     .bind(&bind_address_clone)
     .with_context(|| format!("Failed to bind server to {}", bind_address_clone))?;
