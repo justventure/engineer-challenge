@@ -11,10 +11,6 @@
   <a href="https://sonarcloud.io/summary/new_code?id=vwency_engineer-challenge"><img src="https://sonarcloud.io/api/project_badges/measure?project=vwency_engineer-challenge&metric=reliability_rating"/></a>
   <a href="https://sonarcloud.io/summary/new_code?id=vwency_engineer-challenge"><img src="https://sonarcloud.io/api/project_badges/measure?project=vwency_engineer-challenge&metric=sqale_rating"/></a>
 
-  <!-- Rust -->
-  <img src="https://img.shields.io/badge/rust-1.95.0--nightly-orange?logo=rust"/>
-  <img src="https://img.shields.io/badge/unsafe-forbidden-success?logo=rust"/>
-
   <!-- Meta -->
   <a href="https://github.com/vwency/engineer-challenge/blob/main/LICENSE"><img src="https://img.shields.io/github/license/vwency/engineer-challenge"/></a>
   <img src="https://img.shields.io/github/last-commit/vwency/engineer-challenge"/>
