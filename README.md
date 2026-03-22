@@ -173,7 +173,7 @@ flowchart LR
 ---  
 
 <details>
-<summary><strong>запуск & тесты</strong></summary>
+<summary><strong>Запуск & тесты</strong></summary>
 <br>
     
 ## Running  
