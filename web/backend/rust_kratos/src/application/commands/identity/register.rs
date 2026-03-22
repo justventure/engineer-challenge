@@ -6,6 +6,7 @@ use std::sync::Arc;
 
 pub struct RegisterCommand {
     pub data: RegistrationData,
+    pub cookie: Option<String>,
 }
 
 pub struct RegisterCommandResult {
@@ -26,7 +27,10 @@ impl RegisterCommandHandler {
 #[async_trait]
 impl CommandHandler<RegisterCommand, RegisterCommandResult> for RegisterCommandHandler {
     async fn handle(&self, command: RegisterCommand) -> Result<RegisterCommandResult, DomainError> {
-        let flow_id = self.registration_port.initiate_registration(None).await?;
+        let flow_id = self
+            .registration_port
+            .initiate_registration(command.cookie.as_deref())
+            .await?;
         let session_cookie = self
             .registration_port
             .complete_registration(&flow_id, command.data)

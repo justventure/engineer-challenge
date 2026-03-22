@@ -25,6 +25,7 @@ redis-down:
 monitoring-down:
 	$(COMPOSE) -f docker-compose.monitoring.yaml down -v
 down: kratos-down
+
 cleanup:
 	$(COMPOSE) \
 	-f docker-compose.kratos.yaml \

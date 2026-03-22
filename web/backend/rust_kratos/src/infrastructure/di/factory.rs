@@ -36,7 +36,10 @@ impl KratosAdapterFactory {
 
 impl AdapterFactory for KratosAdapterFactory {
     fn create_registration_adapter(&self) -> Arc<dyn RegistrationPort> {
-        Arc::new(KratosRegistrationAdapter::new(self.client.clone()))
+        Arc::new(KratosRegistrationAdapter::new(
+            self.client.clone(),
+            self.create_session_adapter(),
+        ))
     }
 
     fn create_authentication_adapter(&self) -> Arc<dyn AuthenticationPort> {
