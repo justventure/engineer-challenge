@@ -12,3 +12,12 @@ down:
 
 cleanup:
 	$(MAKE) -C infrastructure/local_development cleanup
+
+fmt:
+    cargo fmt
+
+lint:
+    cargo clippy -- -D warnings
+
+check: fmt lint
+    cargo check

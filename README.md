@@ -1,47 +1,69 @@
 # Auth Service
+
 <div align="left">
-  <a href="https://sonarcloud.io/summary/new_code?id=vwency_engineer-challenge"><img src="https://sonarcloud.io/api/project_badges/measure?project=vwency_engineer-challenge&metric=alert_status"/></a>
-  <a href="https://sonarcloud.io/summary/new_code?id=vwency_engineer-challenge"><img src="https://sonarcloud.io/api/project_badges/measure?project=vwency_engineer-challenge&metric=bugs"/></a>
-  <a href="https://sonarcloud.io/summary/new_code?id=vwency_engineer-challenge"><img src="https://sonarcloud.io/api/project_badges/measure?project=vwency_engineer-challenge&metric=code_smells"/></a>
-  <img src="https://img.shields.io/github/license/vwency/engineer-challenge"/>
-  <img src="https://img.shields.io/badge/rust-1.95.0--nightly-orange?logo=rust"/>
-  <img src="https://img.shields.io/badge/unsafe-forbidden-success"/>
+
+  <!-- CI/CD -->
   <a href="https://github.com/vwency/engineer-challenge/actions/workflows/backend-push.yaml"><img src="https://github.com/vwency/engineer-challenge/actions/workflows/backend-push.yaml/badge.svg"/></a>
   <a href="https://github.com/vwency/engineer-challenge/actions/workflows/frontend-push.yaml"><img src="https://github.com/vwency/engineer-challenge/actions/workflows/frontend-push.yaml/badge.svg"/></a>
+
+  <!-- Code quality -->
+  <a href="https://sonarcloud.io/summary/new_code?id=vwency_engineer-challenge"><img src="https://sonarcloud.io/api/project_badges/measure?project=vwency_engineer-challenge&metric=security_rating"/></a>
+  <a href="https://sonarcloud.io/summary/new_code?id=vwency_engineer-challenge"><img src="https://sonarcloud.io/api/project_badges/measure?project=vwency_engineer-challenge&metric=reliability_rating"/></a>
+  <a href="https://sonarcloud.io/summary/new_code?id=vwency_engineer-challenge"><img src="https://sonarcloud.io/api/project_badges/measure?project=vwency_engineer-challenge&metric=sqale_rating"/></a>
+
+  <!-- Dependencies & security -->
+  <a href="https://deps.rs/repo/github/vwency/engineer-challenge"><img src="https://deps.rs/repo/github/vwency/engineer-challenge/status.svg"/></a>
+
+  <!-- Rust -->
+  <img src="https://img.shields.io/badge/rust-1.95.0--nightly-orange?logo=rust"/>
+  <img src="https://img.shields.io/badge/unsafe-forbidden-success?logo=rust"/>
+
+  <!-- Meta -->
+  <a href="https://github.com/vwency/engineer-challenge/blob/main/LICENSE"><img src="https://img.shields.io/github/license/vwency/engineer-challenge"/></a>
+  <img src="https://img.shields.io/github/last-commit/vwency/engineer-challenge"/>
+
 </div>
 
-## Description 
-Проект реализует функции восстановление пароля, регистрация, авторизации, максимально приближенные к prod-ready решениям. С кэшированием в valkey(open source форк redis)
- 
-## Architecture
+## Description
+Проект реализует функции восстановление пароля, регистрация, авторизации, максимально приближенные к prod-ready решениям. С кэшированием в valkey(open source форк redis)  
 
-**Hexagonal architecture**  
-- Порты, отвязка реализации от транспорта
+---
 
-**DDD**  
-- Фокус на доменной логике
-- Улучшенная поддерживаемость  
-- Чёткое разделение бизнес-слоёв
+<details>
+<summary><strong>Architecture</strong></summary>  
+<br>
 
-**DI**  
-- Слабая связанность компонентов  
-- Упрощённое тестирование  
-- Гибкость замены реализаций
+| Паттерн | Что даёт |
+|---|---|
+| Hexagonal architecture | Отвязка реализации от транспорта через порты |
+| DDD | Фокус на доменной логике, чёткое разделение бизнес-слоёв |
+| DI | Слабая связанность, гибкость замены реализаций |
+| CQRS | Разделение чтения/записи, оптимизация I/O, масштабируемость |
 
-**CQRS**  
-- Разделение операций чтения и записи  
-- Оптимизация I/O  
-- Улучшенная масштабируемость  
+</details>
 
-## Tech stack
-1. **REST**, поскольку поддерживает в запросе `Set-Cookies`, статус коды http.
-2. **Yarn berry** большое сообщество, кастомизация.  
-3. **NX** время сборки, уменьшение времени на CI.  
-4. **Rust** строгая типипизация, гарантия доставки, гибкость в архитектуре.
-5. **Valkey**  Поддержка — Valkey поддерживается крупными компаниями: AWS, Google, Oracle, Ericsson. Redis Ltd. — единственный вендор Redis OSS.
+---  
 
+<details>
+<summary><strong>Tech stack</strong></summary>
+<br>
+    
+| Технология | Причина выбора |
+|---|---|
+| REST | Поддержка `Set-Cookie` и HTTP статус-кодов в запросе |
+| Yarn berry | Большое сообщество, гибкая кастомизация |
+| NX | Ускорение сборки, сокращение времени CI |
+| Rust | Строгая типизация, гарантия корректности, гибкость архитектуры |
+| Valkey | Поддерживается AWS, Google, Oracle, Ericsson — в отличие от Redis OSS, где единственный вендор Redis Ltd. |
 
-## Trade-offs  
+</details>
+
+---
+
+<details>
+<summary><strong>Trade-offs</strong></summary>
+<br>
+
 | Решение | Причина | Когда пересмотреть |
 |---|---|---|
 | Дублирование стилей/tsx | Скорость прототипирования | Перед подготовкой к prod-ready |
@@ -49,16 +71,31 @@
 | Webpack (HMR, hot-reload) | HMR из коробки, turbopack его не поддерживает | При появлении HMR в turbopack |
 | Нет подтверждения пароля по почте при регистрации | Время отладки | Рефакторинг во время разработки |
 | Нет полноценного IaC | Время | При enterprise подготовке к prod |
-| Cookie-based сессии вместо JWT | Один сервис, нет экосистемы; сессия шарится cross-domain с `credentials: include` | При масштабировании или добавлении новых сервисов |
-| Auth-сервис как единый Bounded Context | Дробить BC внутри одного сервиса — over-engineering без реальных причин | При выделении отдельных поддоменов в рамках роста системы |
+| Cookie-based сессии вместо JWT | Один сервис, нет экосистемы | При масштабировании или добавлении новых сервисов |
+| Auth-сервис как единый Bounded Context | Дробить BC — over-engineering | При выделении отдельных поддоменов |
 | Ory экосистема | гибкость конфигурации и интеграция с hydra для OpenID | При enterprise+ |
 
-### Continue
+</details>
+
+---  
+
+<details>
+<summary><strong>Roadmap</strong></summary>
+<br>
+
 1. GitOps — чтение новых helm релизов и их применение.
 2. Coverage тесты в CI, codecov, SonarQube.  
 3. Нагрузочные тесты на GetCurrentUserQuery, Commands
-4. 
+
+</details>
+
+---
+
+<details>
+<summary><strong>Diagrams</strong></summary>
+<br>
 Схема command запроса:
+
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#1E3A5F', 'primaryTextColor': '#FFFFFF', 'primaryBorderColor': '#2D5A8E', 'lineColor': '#EF4444', 'secondaryColor': '#162D4A', 'tertiaryColor': '#0F1F35', 'clusterBkg': '#0F1F35', 'clusterBorder': '#2D5A8E', 'titleColor': '#FFFFFF', 'edgeLabelBackground': '#1E3A5F', 'nodeTextColor': '#FFFFFF'}}}%%
 flowchart LR
@@ -131,7 +168,14 @@ flowchart LR
     Adapter --> Handler
     Handler --> RestResponse[REST Response]
 ```
+</details>
 
+---  
+
+<details>
+<summary><strong>запуск & тесты</strong></summary>
+<br>
+    
 ## Running  
 ```bash
 make up
@@ -148,3 +192,4 @@ cd web/backend/rust_kratos && make infra-up && cargo test ; cd ../../../
 ```bash
 cd web/frontend && yarn install && yarn test ; cd ../../
 ```
+</details>
