@@ -4,12 +4,10 @@
   <a href="https://sonarcloud.io/summary/new_code?id=vwency_engineer-challenge"><img src="https://sonarcloud.io/api/project_badges/measure?project=vwency_engineer-challenge&metric=bugs"/></a>
   <a href="https://sonarcloud.io/summary/new_code?id=vwency_engineer-challenge"><img src="https://sonarcloud.io/api/project_badges/measure?project=vwency_engineer-challenge&metric=code_smells"/></a>
   <img src="https://img.shields.io/github/license/vwency/engineer-challenge"/>
-  <img src="https://img.shields.io/github/last-commit/vwency/engineer-challenge"/>
-  <img src="https://img.shields.io/github/repo-size/vwency/engineer-challenge"/>
-  <img src="https://img.shields.io/github/issues/vwency/engineer-challenge"/>
   <img src="https://img.shields.io/badge/rust-1.95.0--nightly-orange?logo=rust"/>
   <img src="https://img.shields.io/badge/unsafe-forbidden-success"/>
   <a href="https://github.com/vwency/engineer-challenge/actions/workflows/backend-push.yaml"><img src="https://github.com/vwency/engineer-challenge/actions/workflows/backend-push.yaml/badge.svg"/></a>
+  <a href="https://github.com/vwency/engineer-challenge/actions/workflows/frontend-push.yaml"><img src="https://github.com/vwency/engineer-challenge/actions/workflows/frontend-push.yaml/badge.svg"/></a>
 </div>
 
 ## Description 
@@ -59,7 +57,7 @@
 4. 
 Схема command запроса:
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#FECACA', 'primaryTextColor': '#7F1D1D', 'primaryBorderColor': '#F87171', 'lineColor': '#EF4444', 'secondaryColor': '#FEE2E2', 'tertiaryColor': '#FFF1F1'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#1E3A5F', 'primaryTextColor': '#FFFFFF', 'primaryBorderColor': '#2D5A8E', 'lineColor': '#EF4444', 'secondaryColor': '#162D4A', 'tertiaryColor': '#0F1F35', 'clusterBkg': '#0F1F35', 'clusterBorder': '#2D5A8E', 'titleColor': '#FFFFFF', 'edgeLabelBackground': '#1E3A5F', 'nodeTextColor': '#FFFFFF'}}}%%
 flowchart LR
     Client[HTTP Client]
     Client -->|Email + Password| TryFrom
@@ -92,7 +90,7 @@ flowchart LR
 
 Реализация кэша redis для запрос Query, что бы не загружать postgres.
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#FECACA', 'primaryTextColor': '#7F1D1D', 'primaryBorderColor': '#F87171', 'lineColor': '#EF4444', 'secondaryColor': '#FEE2E2', 'tertiaryColor': '#FFF1F1'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#1E3A5F', 'primaryTextColor': '#FFFFFF', 'primaryBorderColor': '#2D5A8E', 'lineColor': '#EF4444', 'secondaryColor': '#162D4A', 'tertiaryColor': '#0F1F35', 'clusterBkg': '#0F1F35', 'clusterBorder': '#2D5A8E', 'titleColor': '#FFFFFF', 'edgeLabelBackground': '#1E3A5F', 'nodeTextColor': '#FFFFFF'}}}%%
 flowchart TD
     Client[HTTP Client]
     Client -->|cookie from request| GetCurrentUserQuery
@@ -114,7 +112,7 @@ flowchart TD
 
 Валидация входных данных:
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#FECACA', 'primaryTextColor': '#7F1D1D', 'primaryBorderColor': '#F87171', 'lineColor': '#EF4444', 'secondaryColor': '#FEE2E2', 'tertiaryColor': '#FFF1F1'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#1E3A5F', 'primaryTextColor': '#FFFFFF', 'primaryBorderColor': '#2D5A8E', 'lineColor': '#EF4444', 'secondaryColor': '#162D4A', 'tertiaryColor': '#0F1F35', 'clusterBkg': '#0F1F35', 'clusterBorder': '#2D5A8E', 'titleColor': '#FFFFFF', 'edgeLabelBackground': '#1E3A5F', 'nodeTextColor': '#FFFFFF'}}}%%
 flowchart LR
     Input[REST Input Body]
     Input --> TryFrom[TryFrom]
