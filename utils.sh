@@ -1,1 +1,4 @@
-git subtree pull --prefix=web/backend/rust_kratos rust_kratos main --squash
+git submodule update --remote --merge
+git add .
+git commit -m "chore: update submodules"
+git push
