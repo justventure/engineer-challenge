@@ -32,10 +32,6 @@
 - Оптимизация I/O  
 - Улучшенная масштабируемость  
 
-**ADR References:**  
-- [Cookie-based Session Authentication](./docs/adr/0001-cookie-session.md)  
-- [Valkey Cache for Session Profiles](./docs/adr/0003-valkey-cache.md)  
-
 ## Tech stack
 1. **REST**, поскольку поддерживает в запросе `Set-Cookies`, статус коды http.
 2. **Yarn berry** большое сообщество, кастомизация.  
@@ -60,25 +56,20 @@
 1. GitOps — чтение новых helm релизов и их применение.
 2. Coverage тесты в CI, codecov, SonarQube.  
 3. Нагрузочные тесты на GetCurrentUserQuery, Commands
-
-Схема command запроса:
+4. 
 Схема command запроса:
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#FECACA', 'primaryTextColor': '#7F1D1D', 'primaryBorderColor': '#F87171', 'lineColor': '#EF4444', 'secondaryColor': '#FEE2E2', 'tertiaryColor': '#FFF1F1'}}}%%
 flowchart LR
     Client[HTTP Client]
-    Client -->|UserIp X-Forwarded-For| RateLimit{RateLimiter}
-    RateLimit -->|Exceeded| RestError[REST Error 429]
-    RateLimit -->|OK| TryFrom
-
+    Client -->|Email + Password| TryFrom
     subgraph Validation
         TryFrom -->|Email + Password VO| LoginCommand
-        TryFrom -->|Err| RestError
+        TryFrom -->|Err| RestError[REST Error 422]
     end
-
     subgraph Application
         LoginCommand --> LoginCommandHandler
     end
-
     subgraph Initiate
         LoginCommandHandler -->|initiate_login cookie| AuthenticationPort
         AuthenticationPort --> KratosAuthenticationAdapter
@@ -87,15 +78,13 @@ flowchart LR
         KratosAuthenticationAdapter -->|fetch_flow| Kratos
         Kratos -->|flow_id + csrf_token| KratosAuthenticationAdapter
     end
-
     subgraph Complete
-        LoginCommandHandler -->|complete_login credentials| AuthenticationPort
-        AuthenticationPort --> KratosAuthenticationAdapter
-        KratosAuthenticationAdapter -->|build| LoginPayload[LoginPayload Infra Model]
-        LoginPayload -->|POST flow| Kratos
-        Kratos -->|SessionCookie| KratosAuthenticationAdapter
+        LoginCommandHandler -->|complete_login credentials| AuthenticationPort2[AuthenticationPort]
+        AuthenticationPort2 --> KratosAuthenticationAdapter2[KratosAuthenticationAdapter]
+        KratosAuthenticationAdapter2 -->|build| LoginPayload[LoginPayload Infra Model]
+        LoginPayload -->|POST flow| Kratos2[Kratos]
+        Kratos2 -->|SessionCookie| KratosAuthenticationAdapter2
     end
-
     KratosAuthenticationAdapter -->|SessionCookie| LoginCommandHandler
     LoginCommandHandler -->|session_token| Client
     Client -->|Set-Cookie| RestResponse[POST /auth/login Response]
@@ -103,26 +92,20 @@ flowchart LR
 
 Реализация кэша redis для запрос Query, что бы не загружать postgres.
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#FECACA', 'primaryTextColor': '#7F1D1D', 'primaryBorderColor': '#F87171', 'lineColor': '#EF4444', 'secondaryColor': '#FEE2E2', 'tertiaryColor': '#FFF1F1'}}}%%
 flowchart TD
     Client[HTTP Client]
-    Client -->|UserIp from X-Forwarded-For| RateLimit{RateLimiter}
-    RateLimit -->|Exceeded| RestError[REST Error 429]
-    RateLimit -->|OK| GetCurrentUserQuery
     Client -->|cookie from request| GetCurrentUserQuery
-
     GetCurrentUserQuery -->|cookie Option| GetCurrentUserQueryHandler
     GetCurrentUserQueryHandler -->|extract session token| CacheKey[cache_key: user_profile:token]
-
     CacheKey --> RedisLookup{Redis GET}
     RedisLookup -->|HIT| Deserialize[serde_json::from_str]
     Deserialize -->|UserProfile| RestResponse[GET /auth/me Response]
-
     RedisLookup -->|MISS| IdentityPort
     IdentityPort -->|get_current_user cookie| KratosIdentityAdapter
     KratosIdentityAdapter -->|GET /sessions/whoami| Kratos
     Kratos -->|401 Unauthorized| AuthError[AuthError::NotAuthenticated]
-    AuthError --> RestError
-
+    AuthError --> RestError[REST Error 401]
     Kratos -->|SessionResponse| KratosIdentityAdapter
     KratosIdentityAdapter -->|traits.into| UserProfile
     UserProfile -->|serde_json::to_string| RedisSet[Redis SET EX cache_ttl_secs]
@@ -131,23 +114,18 @@ flowchart TD
 
 Валидация входных данных:
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#FECACA', 'primaryTextColor': '#7F1D1D', 'primaryBorderColor': '#F87171', 'lineColor': '#EF4444', 'secondaryColor': '#FEE2E2', 'tertiaryColor': '#FFF1F1'}}}%%
 flowchart LR
     Input[REST Input Body]
     Input --> TryFrom[TryFrom]
-
     TryFrom --> VO[VO Email / Password]
-
     VO -->|Ok| Domain[Domain Object]
     VO -->|Err| Error[REST Error 422]
-
     Domain --> Handler[CommandHandler]
     Handler --> Adapter[KratosAdapter]
-
     Adapter --> Models[Infra Models]
     Models --> Kratos[Kratos]
-
     Kratos --> Response[FlowResult / PostFlowResult]
-
     Response --> Adapter
     Adapter --> Handler
     Handler --> RestResponse[REST Response]
