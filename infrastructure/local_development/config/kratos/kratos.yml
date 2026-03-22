@@ -2,7 +2,7 @@ version: v1.3.0
 dsn: postgres://kratos:kratos_secret@postgres-kratos:5432/kratos?sslmode=disable
 serve:
   public:
-    base_url: http://localhost:4433/
+    base_url: http://kratos:4433/
     cors:
       enabled: true
       allowed_origins:
@@ -61,16 +61,16 @@ selfservice:
   flows:
     error:
       ui_url: http://localhost:3000/error
-      
+
     settings:
-        ui_url: http://localhost:3000/settings
-        privileged_session_max_age: 15m
-        required_aal: highest_available
-        after:
-          default_browser_return_url: http://localhost:3000/login
-          password:
-            hooks:
-              - hook: revoke_active_sessions
+      ui_url: http://localhost:3000/settings
+      privileged_session_max_age: 15m
+      required_aal: highest_available
+      after:
+        default_browser_return_url: http://localhost:3000/login
+        password:
+          hooks:
+            - hook: revoke_active_sessions
 
     recovery:
       enabled: true
@@ -78,7 +78,7 @@ selfservice:
       use: link
       after:
         default_browser_return_url: http://localhost:3000/settings
-        
+
     verification:
       enabled: false
       ui_url: http://localhost:3000/verification
