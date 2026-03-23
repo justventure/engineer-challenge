@@ -1,5 +1,4 @@
 // main.ts
-import http6 from "k6/http";
 import { sleep } from "k6";
 
 // config.ts
@@ -18,13 +17,16 @@ function register() {
   const res = http.post(
     `${BASE_URL}/auth/register`,
     JSON.stringify({
-      identifier: `${uid}@test.com`,
+      identifier: `${uid}@test2.com`,
       username: uid,
       password: "Test1234!",
       geo_location: "ES"
     }),
     { headers }
   );
+  if (res.status === 500) {
+    console.error(`\u{1F525} 500 register URL: ${res.url} body: ${res.body}`);
+  }
   check(res, {
     "register 2xx": (r) => r.status >= 200 && r.status < 300,
     "register <500ms": (r) => r.timings.duration < 500
@@ -40,6 +42,9 @@ function login() {
     JSON.stringify({ identifier: "test@example.com", password: "Test1234!" }),
     { headers }
   );
+  if (res.status === 500) {
+    console.error(`\u{1F525} 500 login URL: ${res.url} body: ${res.body}`);
+  }
   check2(res, { "login 2xx": (r) => r.status >= 200 && r.status < 300 });
   return res.cookies;
 }
@@ -49,6 +54,9 @@ import http3 from "k6/http";
 import { check as check3 } from "k6";
 function getCurrentUser(cookies) {
   const res = http3.get(`${BASE_URL}/auth/me`, { cookies });
+  if (res.status === 500) {
+    console.error(`\u{1F525} 500 me URL: ${res.url} body: ${res.body}`);
+  }
   check3(res, { "me 200": (r) => r.status === 200 });
 }
 
@@ -61,28 +69,13 @@ function recovery() {
     JSON.stringify({ email: "test@example.com" }),
     { headers }
   );
+  if (res.status === 500) {
+    console.error(`\u{1F525} 500 recovery URL: ${res.url} body: ${res.body}`);
+  }
   check4(res, { "recovery 2xx": (r) => r.status < 300 });
 }
 
-// scenarios/verification.ts
-import http5 from "k6/http";
-import { check as check5 } from "k6";
-function sendCode() {
-  const res = http5.post(
-    `${BASE_URL}/auth/verify/code/send`,
-    JSON.stringify({ email: "test@example.com" }),
-    { headers }
-  );
-  check5(res, { "send_code 2xx": (r) => r.status < 300 });
-}
-
 // main.ts
-http6.setResponseCallback(
-  http6.expectedStatuses({
-    min: 200,
-    max: 499
-  })
-);
 var options = {
   thresholds: defaultThresholds,
   scenarios: {
@@ -109,10 +102,8 @@ function main_default() {
     getCurrentUser(cookies);
   } else if (roll < 0.75) {
     register();
-  } else if (roll < 0.88) {
-    recovery();
   } else {
-    sendCode();
+    recovery();
   }
   sleep(0.1);
 }

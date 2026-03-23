@@ -1,4 +1,3 @@
-import http from "k6/http";
 import { sleep } from "k6";
 import { Options } from "k6/options";
 import { defaultThresholds } from "./config";
@@ -6,14 +5,6 @@ import { register } from "./scenarios/register";
 import { login } from "./scenarios/login";
 import { getCurrentUser } from "./scenarios/me";
 import { recovery } from "./scenarios/recovery";
-import { sendCode } from "./scenarios/verification";
-
-http.setResponseCallback(
-  http.expectedStatuses({
-    min: 200,
-    max: 499,
-  }),
-);
 
 export const options: Options = {
   thresholds: defaultThresholds,
@@ -37,17 +28,13 @@ export const options: Options = {
 
 export default function (): void {
   const roll = Math.random();
-
   if (roll < 0.55) {
     const cookies = login();
     getCurrentUser(cookies);
   } else if (roll < 0.75) {
     register();
-  } else if (roll < 0.88) {
-    recovery();
   } else {
-    sendCode();
+    recovery();
   }
-
   sleep(0.1);
 }
