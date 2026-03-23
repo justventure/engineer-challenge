@@ -1,12 +1,11 @@
 import { sleep } from "k6";
-import { Options } from "k6/options";
 import { defaultThresholds } from "./config";
 import { register } from "./scenarios/register";
 import { login } from "./scenarios/login";
 import { getCurrentUser } from "./scenarios/me";
 import { recovery } from "./scenarios/recovery";
 
-export const options: Options = {
+export const options: any = {
   thresholds: defaultThresholds,
   scenarios: {
     max_rps: {
