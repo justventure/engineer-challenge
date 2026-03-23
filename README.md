@@ -167,7 +167,7 @@ flowchart LR
 ---  
 
 <details>
-<summary><strong>Запуск & тесты</strong></summary>
+<summary><strong>Running & tests</strong></summary>
 <br>
     
 ## Running  
@@ -187,6 +187,8 @@ cd web/backend/rust_kratos && make infra-up && cargo test ; cd ../../../
 cd web/frontend && yarn install && yarn test ; cd ../../
 ```
 </details>
+
+---  
 
 <details>
 <summary><strong>Показатели нагрузки</strong></summary>
