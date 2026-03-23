@@ -1,4 +1,5 @@
 // main.ts
+import http6 from "k6/http";
 import { sleep } from "k6";
 
 // config.ts
@@ -76,6 +77,12 @@ function sendCode() {
 }
 
 // main.ts
+http6.setResponseCallback(
+  http6.expectedStatuses({
+    min: 200,
+    max: 499
+  })
+);
 var options = {
   thresholds: defaultThresholds,
   scenarios: {

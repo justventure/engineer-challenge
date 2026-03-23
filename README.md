@@ -79,6 +79,7 @@
 1. GitOps — чтение новых helm релизов и их применение.
 2. Coverage тесты в CI, codecov, SonarQube.  
 3. Нагрузочные тесты на GetCurrentUserQuery, Commands
+4. SLA
 
 </details>
 
@@ -185,4 +186,42 @@ cd web/backend/rust_kratos && make infra-up && cargo test ; cd ../../../
 ```bash
 cd web/frontend && yarn install && yarn test ; cd ../../
 ```
+</details>
+
+<details>
+<summary><strong>Показатели нагрузки</strong></summary>
+<br>
+
+```bash
+✓ recovery 2xx
+✓ login 2xx
+✓ me 200
+✓ register 2xx
+✗ register <500ms
+ ↳  50% — ✓ 3770 / ✗ 3719
+✗ send_code 2xx
+ ↳  0% — ✓ 0 / ✗ 4503
+
+checks.........................: 87.38% 56964 out of 65186
+data_received..................: 34 MB  148 kB/s
+data_sent......................: 20 MB  87 kB/s
+dropped_iterations.............: 12175  52.905724/s
+http_req_blocked...............: avg=6.45µs   min=1.18µs   med=3.54µs   max=33.62ms p(90)=4.65µs  p(95)=5.18µs
+http_req_connecting............: avg=2.02µs   min=0s       med=0s       max=33.58ms p(90)=0s      p(95)=0s
+✗ http_req_duration..............: avg=421.38ms min=209.9µs  med=27.75ms  max=3.47s   p(90)=1.44s   p(95)=1.71s
+  { expected_response:true }...: avg=450.74ms min=209.9µs  med=27.56ms  max=3.47s   p(90)=1.48s   p(95)=1.74s
+✗ http_req_failed................: 7.80%  4503 out of 57697
+http_req_receiving.............: avg=57.28µs  min=8.38µs   med=37.28µs  max=87.54ms p(90)=60.95µs p(95)=110.72µs
+http_req_sending...............: avg=18.8µs   min=3.81µs   med=14.01µs  max=50.93ms p(90)=19.8µs p(95)=23.81µs
+http_req_tls_handshaking.......: avg=0s       min=0s       med=0s       max=0s      p(90)=0s      p(95)=0s
+http_req_waiting...............: avg=421.31ms min=187.96µs med=27.67ms  max=3.47s   p(90)=1.44s   p(95)=1.71s
+http_reqs......................: 57697  250.718815/s
+iteration_duration.............: avg=754.4ms  min=101.27ms med=397.27ms max=3.57s   p(90)=1.72s   p(95)=1.95s
+iterations.....................: 37225  161.758981/s
+vus............................: 0      min=0              max=300
+vus_max........................: 300    min=50             max=300
+```
+
+![bench](./art/bench.png)
+
 </details>
