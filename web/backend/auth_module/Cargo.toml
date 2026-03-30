@@ -12,3 +12,4 @@ config = { version="0.15.22" }
 actix-cors = "0.7"
 anyhow = "1"
 dotenvy = "0.15.7"
+serde_json = "1.0.149"

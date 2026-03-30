@@ -279,6 +279,7 @@ dependencies = [
  "dotenvy",
  "rust_kratos",
  "serde",
+ "serde_json",
  "tokio",
 ]
 

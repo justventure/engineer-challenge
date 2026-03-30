@@ -1,7 +1,7 @@
 pub mod auth;
+pub mod dto;
 pub mod errors;
 pub mod extractors;
-
 use actix_web::web;
 
 pub fn routes(cfg: &mut web::ServiceConfig) {
