@@ -11,7 +11,7 @@ on:
 
 jobs:
   trigger-build:
-    uses: vwency/workflow/.github/workflows/buildx.yaml@main
+    uses: justventure/workflow/.github/workflows/buildx.yaml@main
     with:
       image-name: ${{ github.repository }}/rust_kratos
       context: "./web/backend/rust_kratos"
@@ -29,7 +29,7 @@ jobs:
 
   trigger-cleanup:
     needs: [trigger-build]
-    uses: vwency/workflow/.github/workflows/clean-registry.yaml@main
+    uses: justventure/workflow/.github/workflows/clean-registry.yaml@main
     with:
       owner: ${{ github.repository_owner }}
       repository: engineer-challenge

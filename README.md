@@ -27,7 +27,7 @@
 
 | Модуль | Описание |
 |---|---|
-| [`rust_kratos`](https://github.com/justventure/engineer-challenge/tree/master/web/backend/rust_kratos) | основной api |
+| [`rust_kratos`](https://github.com/justventure/rust_kratos/tree/main) | основной api |
 | [`frontend`](./web/frontend) | фронтенд |
 | [`k6_tests`](./web/backend/k6_tests) | нагрузочное тестирование k6 |
 
@@ -69,9 +69,9 @@
     
 | feature | description |
 |---|---|
-| backpressure | in continue better use hybrid backpressure(infrastructure + application), application check os backlog and set connection limits for more safety |
-| caching | postgres can overload I/O if caching will not implemented |
-| rest | supports status codes, more flexible(headers & params & cookie) less cpu-heave than graphql |
+| Backpressure | For better resilience, consider hybrid backpressure (infrastructure + application level). The application should monitor OS backlog and enforce connection limits for safer load handling. |
+| Caching | Without caching, Postgres can become an I/O bottleneck under load. |
+| REST | Supports standard status codes, more flexible than GraphQL (headers, params, cookies), and less CPU-intensive. |
 
 </details>
 
@@ -216,7 +216,7 @@ cd web/frontend && yarn install && yarn test ; cd ../../
 ---  
 
 <details>
-<summary><strong>Показатели нагрузки</strong></summary>
+<summary><strong>Load tests</strong></summary>
 <br>
 
 ```bash
