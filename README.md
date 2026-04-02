@@ -43,11 +43,26 @@
     
 | Технология | Причина выбора |
 |---|---|
-| REST | Поддержка `Set-Cookie` и HTTP статус-кодов в запросе |
 | Yarn berry | Большое сообщество, гибкая кастомизация |
 | NX | Ускорение сборки, сокращение времени CI |
 | Rust | Строгая типизация, гарантия корректности, гибкость архитектуры |
 | Valkey | Поддерживается AWS, Google, Oracle, Ericsson — в отличие от Redis OSS, где единственный вендор Redis Ltd. |
+
+</details>
+
+---
+
+---  
+
+<details>
+<summary><strong>Key decisions</strong></summary>
+<br>
+    
+| feature | description |
+|---|---|
+| backpressure | in continue better use hybrid backpressure(infrastructure + application), application check os backlog and set connection backlog for more safety |
+| caching | postgres can overload I/O if caching will not be implemented |
+| http | http supports status codes, more flexible(support headers & params & cookie) less cpu-heave than graphql |
 
 </details>
 
