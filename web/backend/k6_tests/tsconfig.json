@@ -8,7 +8,6 @@
     "noImplicitAny": false,
     "noEmit": true,
     "allowImportingTsExtensions": true,
-    "types": ["k6"],
   },
   "include": ["./**/*.ts"],
 }

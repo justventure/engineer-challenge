@@ -60,7 +60,7 @@
 |---|---|
 | backpressure | in continue better use hybrid backpressure(infrastructure + application), application check os backlog and set connection limits for more safety |
 | caching | postgres can overload I/O if caching will not implemented |
-| rest | rest supports status codes, more flexible(support headers & params & cookie) less cpu-heave than graphql |
+| rest | supports status codes, more flexible(headers & params & cookie) less cpu-heave than graphql |
 
 </details>
 

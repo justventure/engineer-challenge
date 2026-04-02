@@ -187,10 +187,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/k6@npm:^1.6.0":
-  version: 1.6.0
-  resolution: "@types/k6@npm:1.6.0"
-  checksum: 10c0/9197dc7054c5c42e1f0a4e9b8ed3dc927339b869af8fbb18e99f0669e945abf1af8eea78b10d39a9cf5a751328c2c95810e9966c47272b354fc2e1090a8b9a16
+"@types/k6@npm:^1.7.0":
+  version: 1.7.0
+  resolution: "@types/k6@npm:1.7.0"
+  checksum: 10c0/d8de78a7f90acf3906cf8414dc88eba181cea8768b6cb4096fad24f8efd3eb6def8f8d119f3416406cb0e7691c1ef8853abe26ffe6814bd331d3e048fa85d189
   languageName: node
   linkType: hard
 
@@ -287,7 +287,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "k6_tests@workspace:."
   dependencies:
-    "@types/k6": "npm:^1.6.0"
+    "@types/k6": "npm:^1.7.0"
     esbuild: "npm:^0.27.4"
     typescript: "npm:^5.9.3"
   languageName: unknown

@@ -9,7 +9,7 @@
     "test:vv": "node build.js && k6 run dist/main.js --summary-export=summary.json && node ./scripts/print_500.js"
   },
   "devDependencies": {
-    "@types/k6": "^1.6.0",
+    "@types/k6": "^1.7.0",
     "esbuild": "^0.27.4",
     "typescript": "^5.9.3"
   }
