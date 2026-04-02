@@ -7,7 +7,7 @@ on:
       - main
       - master
     paths:
-      - "web/backend/rust_kratos/**"
+      - "web/backend/**"
 
 jobs:
   trigger-build:

@@ -20,6 +20,17 @@
 ## Description
 Проект реализует функции восстановление пароля, регистрация, авторизации, максимально приближенные к prod-ready решениям. С кэшированием в valkey(open source форк redis)  
 
+## Overview
+
+Модульная структура каждый отдельный модуль содержит свой readme и .env.example
+Модули
+
+| Модуль | Описание |
+|---|---|
+| [`rust_kratos`](https://github.com/justventure/engineer-challenge/tree/master/web/backend/rust_kratos) | основной api |
+| [`frontend`](./web/frontend) | фронтенд |
+| [`k6_tests`](./web/backend/k6_tests) | нагрузочное тестирование k6 |
+
 ---
 
 <details>
